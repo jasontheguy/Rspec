@@ -1,4 +1,5 @@
 require_relative '../../../app/api'
+require 'rack/test'
 
 module ExpenseTracker
     RSpec.describe 'POST /expenses' do
