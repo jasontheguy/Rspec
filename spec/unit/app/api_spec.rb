@@ -15,14 +15,14 @@ module ExpenseTracker
 
     describe 'POST /expenses' do
       context 'when the expense is successfully recorded' do
-        # ... specs go here ...
-
-        it 'returns the expense id' do
-          expense = { 'some' => 'data' }
-
-          allow(ledger).to receive(:record)
+        let(:expense) {{'some'=>'data'}}
+        
+        before do
+            allow(ledger).to receive(:record)
             .with(expense)
             .and_return(RecordResult.new(true, 417, nil))
+        end
+        it 'returns the expense id' do
 
           post '/expenses', JSON.generate(expense)
 
@@ -31,22 +31,29 @@ module ExpenseTracker
         end
 
         it 'responds with a 200 (OK)' do
-          expense = { 'some' => 'data' }
-
-          allow(ledger).to receive(:record)
-            .with(expense)
-            .and_return(RecordResult.new(true, 417, nil))
-
+          
           post '/expenses', JSON.generate(expense)
           expect(last_response.status).to eq(200)
         end
-      end
-
+    end
       context 'when the expense fails validation' do
-        # ... specs go here ...
-        it 'returns an error message'
-        it 'responds with a 422 (Unprocessable entity)'
+        let(:expense) {{'some'=> 'data'}}
+        
+        before do #Before hook that sets up ledger to get dummy valuess
+            allow(ledger).to receive(:record)
+            .with(expense)
+            .and_return(RecordResult.new(false,417,'Expense incomplete'))
+        end
+        it 'returns an error message' do
+            post '/expenses', JSON.generate(expense)
+            parsed = JSON.parse(last_response.body)
+            expect(parsed).to include('error'=>'Expense incomplete')
+        end
+        it 'responds with a 422 (Unprocessable entity)' do
+            post '/expenses', JSON.generate(expense)
+            expect(last_response.status).to eq(422)
       end
     end
-  end
+end
+end
 end
