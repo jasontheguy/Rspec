@@ -10,8 +10,10 @@ module ExpenseTracker #Module ~ Namespaces
             end
 
             post'/expenses' do #POST method mapped to expenses
-            JSON.generate('expense_id' => 42) #POST call to expenses generates JSON K,V 
-            end
+            expense =JSON.parse(request.body.read) #POST call to expenses generates JSON K,V 
+            result = @ledger.record(expense)
+            JSON.generate('expense_id'=> result.expense_id)    
+        end
 
             get '/expenses/:date' do
                 JSON.generate([]) 
