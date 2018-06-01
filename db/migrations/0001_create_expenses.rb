@@ -5,7 +5,7 @@ Sequel.migration do
             primary_key :id
             String :payee
             Float :amount
-            Date Ldate
+            Date :date
         end
     end
 end
